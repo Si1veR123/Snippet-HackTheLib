@@ -12,3 +12,5 @@ Future:
 
 Youtube Explanation Link: https://youtu.be/I9iN9U0inGA
 Live: http://si1ver123.pythonanywhere.com/
+
+I did complete by the time limit, but I had to restart git repo as I included a development file!
