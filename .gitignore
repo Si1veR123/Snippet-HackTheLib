@@ -1,0 +1,10 @@
+private_settings.py
+.idea/
+*.pyc
+*.psd
+__pycache__/
+node_modules/
+migrations/
+staticfiles/
+ExplanationVideo/
+.git/
