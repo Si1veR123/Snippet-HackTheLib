@@ -2,7 +2,7 @@
 <div>
 
 <div id="top-background">
-    <h1 style="text-align:center; width: 100%; color: white; margin-top: 0;">Community-Not Finished, Coming Soon!</h1>
+    <h1 style="text-align:center; width: 100%; color: white; margin-top: 0;">Community</h1>
     <h3 style="text-align:center; width: 100%; color: white; margin-top: 0;">Search and find trending snippets to learn and get tips.</h3>
 
     <div id="tabs">
