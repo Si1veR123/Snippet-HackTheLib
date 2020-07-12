@@ -5,7 +5,7 @@
             <img src="/static/dashedline.png" style="height: 2px;">
             <router-link to="/">Home</router-link>
             <img src="/static/dashedline.png" style="height: 2px;">
-            <router-link to="/community">Community</router-link>
+            <router-link to="/community/search">Community</router-link>
             <img src="/static/dashedline.png" style="height: 2px;">
             <router-link to="/snippets">Your Snippets</router-link>
             <img src="/static/dashedline.png" style="height: 2px;">

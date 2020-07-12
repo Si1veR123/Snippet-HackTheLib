@@ -3,7 +3,7 @@
 <div id="signup-form-container">
     <div style="padding: 3em 1em; width: 80%; background-color: aliceblue; border-radius: 2em; text-align: center; box-shadow: 0 0 1vh aliceblue;">
         <h1>Signup <br><router-link to="/login" style="color: rgb(200, 200, 200); text-decoration: none; transition: color .2s;">or Login</router-link></h1>
-        <form action="http://localhost:8000/auth/signup/" method="post" @submit="formSubmit($event)">
+        <form action="http://localhost:8000/auth/signup/" method="post" @submit.prevent="formSubmit($event)">
             <p style="color: red" class="error"></p>
             <input required autocomplete="username" type="text" name="username" placeholder="Username">
             <br>
@@ -30,7 +30,6 @@ export default {
         formSubmit: function(e) {
             var router = this.$router;
 
-            e.preventDefault();
             let form = $(e.target);
 
             axios.post(process.env.VUE_APP_ROOT + "auth/signup/", {

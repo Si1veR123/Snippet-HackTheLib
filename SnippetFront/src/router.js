@@ -37,6 +37,7 @@ const routes = [
             {
                 path: "search",
                 component: Search,
+                props: (route) => ({query: route.query.q})
             },
             {
                 path: "featured",

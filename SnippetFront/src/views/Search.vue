@@ -1,27 +1,12 @@
 <template>
 <div>
-    <div style="width: 100%; text-align: center;">
+    <div style="width: 90%; display: flex; align-items: center; justify-content: space-around; margin: 3vh 5vw;">
         <input id="search" type="text" placeholder="Search..."/>
-        <button @click="search">Search</button>
+        <button @click="search"><i class="material-icons">search</i></button>
     </div>
     <hr style="width: 80%; margin-left: 10%;">
 
-    <div id="snippet-flexbox">
-        <div v-for="snippet in snippets" :key="snippet.id" class="snippet-preview" @click="$router.push('snippets/' + snippet.id)">
-            <h2>{{ snippet.name }}</h2>
-            <h3>{{ snippet.date }}</h3>
-            <p style="width: 100%;">{{ snippet.description }}</p>
-            <div class="snippet-tags">
-                <div class="snippet-tag" v-for="tag in snippet.tags" :key="tag.id">
-                    <p>{{ tag.name }}</p>
-                </div>
-            </div>
-            <div class="snip-info">
-                <i class="material-icons" style="font-size: 2vh; color: orange;">content_cut</i>
-                <span style="font-size: 3vh;">{{ snippet.snips.length }}</span>
-            </div>
-        </div>
-    </div>
+    <SnippetFlexbox :snippets="snippets"/>
 
 </div>
 </template>
@@ -30,28 +15,41 @@
 import axios from 'axios';
 import cookies from '../cookie.js';
 import $ from 'jquery';
+import SnippetFlexbox from '@/components/SnippetFlexbox.vue';
 
 
 export default {
     name: "Search",
+    components: {
+        SnippetFlexbox
+    },
     data() {
         return {
-            snippets: {}
+            snippets: {},
         }
     },
     methods: {
         search: function() {
-            axios.post(
-                process.env.VUE_APP_ROOT + "api/search/",
+            this.$router.push(this.$route.path + "?q=" + $("#search").val());
+            this.getSnippets();
+        },
+        getSnippets: function() {
+            axios.get(
+                process.env.VUE_APP_ROOT + "api/searchsnip/",
                 {
-                    searchid: $("#search").val()
-                },
-                {
-                    headers: {"Authorization": "Token " + cookies.getCookie("authtoken")}
+                    headers: {"Authorization": "Token " + cookies.getCookie("authtoken")},
+                    params: {
+                        searchid: this.$route.query.q
+                    }
                 }
             ).then((response) => {
                 this.snippets = response.data
             })
+        }
+    },
+    mounted: function() {
+        if (this.$route.query.q !== undefined) {
+            this.getSnippets()
         }
     }
 }
@@ -67,7 +65,6 @@ input {
     padding-left: 1em;
     width: 55vw;
     height: 42px;
-    margin: 5vh 1vw;
     font-family: inherit;
     font-size: 14px;
     transition: all .3s;
@@ -80,13 +77,17 @@ button {
     padding-left: 1em;
     width: 10vw;
     height: 48px;
-    margin: 5vh 5vw;
     font-family: inherit;
     font-size: 14px;
     transition: all .3s;
     background-color: dodgerblue;
     cursor: pointer;
     color: white;
+    transition: background-color .3s;
+}
+
+button:hover {
+    background-color: skyblue;
 }
 
 input:focus {
@@ -122,6 +123,17 @@ input:focus {
     background-color: aliceblue;
     cursor: pointer;
     transition: background-color .3s, box-shadow .3s, transform .5s;
+}
+
+#snippet-flexbox {
+    padding: 1vh 5vw;
+    width: 90%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: flex-start;
+    flex: 1 2 auto;
+    padding-bottom: 10vh;
 }
 
 </style>

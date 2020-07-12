@@ -13,50 +13,49 @@
         <input v-model="search" id="search" type="text" placeholder="Search..."/>
     </div>
     <hr style="width: 90%; opacity: 0.5;">
-    <transition name="fade">
-    <div v-show="id === undefined">
-        <h1 style="margin-left: 10vw;">Your Snippets: </h1>
-        <div id="snippet-flexbox">
-            <div v-for="snippet in snippets" :key="snippet.id" class="snippet-preview" @click="$router.push('snippets/' + snippet.id)">
-                <h2>{{ snippet.name }}</h2>
-                <h3>{{ snippet.date }}</h3>
-                <p style="width: 100%;">{{ snippet.description }}</p>
-                <div class="snippet-tags">
-                    <div class="snippet-tag" v-for="tag in snippet.tags" :key="tag.id">
-                        <p>{{ tag.name }}</p>
+    <div style="position: relative;">
+        <transition name="fade">
+            <div style="position: absolute; width: 100vw;">
+                <div v-show="id === undefined">
+                    <h1 style="margin-left: 10vw;">Your Snippets: </h1>
+                    <SnippetFlexbox :snippets="snippets"/>
+                </div>
+                <div v-show="id === undefined">
+                    <h1 style="margin-left: 10vw;">Snipped: </h1>
+                    <SnippetFlexbox :snippets="snippedSnippets"/>
+                </div>
+            </div>
+        </transition>
+        <transition name="fade">
+            <div v-show="id !== undefined" style="position: absolute; width: 100vw;">
+                <div id="snippet-view-flexbox">
+                    <h1 style="font-size: 3em; color: dodgerblue; margin: 0.2em;">{{ viewing.name }}</h1>
+                    <h3>{{ viewing.date }}</h3>
+                    <p>{{ viewing.language }}</p>
+                    <p style="width: 90%; text-align: center;">{{ viewing.description }}</p>
+                    <div style="border-radius: 1em; overflow: hidden; margin: 1em; width: 80%;">
+                        <div v-html="viewing.code" id="display-code">
                     </div>
-                </div>
-                <div class="snip-info">
-                    <i class="material-icons" style="font-size: 2vh; color: orange;">content_cut</i>
-                    <span style="font-size: 3vh;">{{ snippet.snips.length }}</span>
+                    </div>
+                    <p style="color: grey; cursor: pointer;" @click="$router.go(-1)">Back</p>
                 </div>
             </div>
-        </div>
+        </transition>
     </div>
-    </transition>
-    <transition name="fade">
-    <div v-show="id !== undefined">
-        <div id="snippet-view-flexbox">
-            <h1 style="font-size: 3em; color: dodgerblue; margin: 0.2em;">{{ viewing.name }}</h1>
-            <h3>{{ viewing.date }}</h3>
-            <p>{{ viewing.language }}</p>
-            <p style="width: 90%; text-align: center;">{{ viewing.description }}</p>
-            <div v-html="viewing.code" id="display-code">
-            </div>
-            <router-link to="/snippets" style="text-decoration: none; color: grey;">Back</router-link>
-        </div>
-    </div>
-    </transition>
 </div>
 </template>
 
 <script>
 import axios from 'axios';
 import cookies from '../cookie.js';
+import SnippetFlexbox from '@/components/SnippetFlexbox.vue';
 
 
 export default {
     name: "Snippets",
+    components: {
+        SnippetFlexbox
+    },
     props: ["id"],
     data() {
         return {
@@ -66,6 +65,32 @@ export default {
             tags: [],
             viewing: {}, // current viewing snippet
             search: "",
+            snippedSnippets: [],
+        }
+    },
+    methods: {
+        findViewing: function() {
+            if (this.id) {
+                var id = this.id;
+                var snippet;
+                snippet = this.unfiltered_snippets.filter((item) => {
+                    if (item.id === Number(id)) {
+                        return true
+                    }
+                    return false
+                })[0]
+
+                if (snippet === undefined) {
+                    snippet = this.snippedSnippets.filter((item) => {
+                        if (item.id === Number(id)) {
+                            return true
+                        }
+                        return false
+                    })[0]
+                }
+
+                this.viewing = snippet;
+            }
         }
     },
     mounted: function() {
@@ -87,31 +112,18 @@ export default {
             })
             vue.tags = [].concat.apply([], tags_unflattened);
 
-            if (this.id) {
-            var id = this.id;
-            let snippet = this.unfiltered_snippets.map((item) => {
-                if (item.id === Number(id)) {
-                    return item
-                }
-            })[id-1]
-            this.viewing = snippet;
-        }
+            this.findViewing();
+        })
 
+        axios.get(process.env.VUE_APP_ROOT + "api/snip/", {
+            headers: {"Authorization": "Token " + cookies.getCookie("authtoken")}
+        }).then((response) => {
+            vue.snippedSnippets = response.data;
         })
     },
     watch: {
         id: function() {
-            if (this.id) {
-                var id = this.id;
-                let snippet = this.unfiltered_snippets.filter((item) => {
-                    console.log(item, id);
-                    if (item.id === Number(id)) {
-                        return true
-                    }
-                    return false
-                })[0]
-                this.viewing = snippet;
-            }
+            this.findViewing()
         },
         search: function() {
             if (this.search === "") {
@@ -278,14 +290,14 @@ p {
 }
 
 #display-code {
-    width: 80%;
     border-radius: 1em;
     color: white;
     background-color: rgb(30, 30, 30);
-    width: calc(80% - 32px);
-    height: calc(80% - 32px);
+    width: calc(100% - 32px);
+    height: calc(100% - 32px);
     font-size: 19px;
-    margin: 1em;
     padding: 16px;
+    overflow-x: scroll;
 }
+
 </style>

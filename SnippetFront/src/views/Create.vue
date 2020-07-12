@@ -1,7 +1,7 @@
 <template>
 <div>
 <div id="create-container">
-    <form style="text-align: center;" @submit="sendForm($event)">
+    <form style="text-align: center;" @submit.prevent="sendForm()">
         <p>Snippet Name:</p>
         <input required name="name" type="text"/>
         <br>
@@ -144,8 +144,7 @@ export default {
             this.formattedCode = this.convertToHtml(currentCode);
             display.html(this.formattedCode);
         },
-        sendForm: function(evt) {
-            evt.preventDefault()
+        sendForm: function() {
 
             let name = $("input[name=name]").val();
             let language = $("input[name=language]").val();

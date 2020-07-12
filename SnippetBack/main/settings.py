@@ -113,7 +113,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
@@ -132,10 +131,5 @@ AUTH_USER_MODEL = "user.User"
 try:
     from . private_settings import *
 except ImportError:
-    import django_heroku
-    django_heroku.settings(locals())
-    # running on heroku server, get environment vars
-    SECRET_KEY = os.environ.get("SECRETKEY")
-    DEBUG = os.environ.get("DEBUG")
-
-    
+    print("PRIVATE SETTINGS MISSING")
+    raise

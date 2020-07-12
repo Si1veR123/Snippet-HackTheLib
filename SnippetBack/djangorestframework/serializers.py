@@ -11,7 +11,7 @@ class TagSerializer(ModelSerializer):
 
 class UserSerializer(ModelSerializer):
     class Meta:
-        fields = ("username", "password", "email")
+        fields = ("id", "username", "password", "email")
         model = get_user_model()
         extra_kwargs = {
             "password": {"write_only": True},
@@ -21,7 +21,7 @@ class UserSerializer(ModelSerializer):
 
 class SnippetSerializer(ModelSerializer):
     tags = TagSerializer(many=True, source="tag_set")
+
     class Meta:
         fields = "__all__"
         model = Snippet
-        depth = 1
